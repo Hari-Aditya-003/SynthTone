@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#07060f" />
   <title>SynthTone — AI Voice Studio</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/components/ai-orb/ai-orb.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./components/ai-orb/ai-orb.css" />
 </head>
 <body>
 
-  <!-- ========== NAV ========== -->
+  <!-- ========== NAV (SonoAI Style Capsule) ========== -->
   <nav class="navbar" id="navbar">
     <a href="#" class="nav-brand">
       <svg class="brand-logo" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,66 +27,147 @@
           </linearGradient>
         </defs>
       </svg>
-      <span class="brand-name">Synth<span class="brand-accent">Tone</span></span>
+      <span class="brand-name">SYNTHTONE</span>
     </a>
 
-    <div class="nav-links">
-      <a href="#hero" class="nav-link">Home</a>
+    <div class="nav-capsule">
+      <a href="#hero" class="nav-link active">Home</a>
       <a href="#voice-agents" class="nav-link">Voices</a>
       <a href="#architecture" class="nav-link">Architecture</a>
       <a href="#studio" class="nav-link">Studio</a>
-      <a href="/docs" target="_blank" class="nav-link">API Docs ↗</a>
+      <a href="https://github.com/Hari-Aditya-003/SynthTone" target="_blank" rel="noopener" class="nav-link">GitHub ↗</a>
     </div>
 
     <div class="nav-actions">
       <div class="key-wrap">
-        <input id="key" type="password" class="key-input" placeholder="API Key" autocomplete="off" />
+        <input id="key" type="password" class="key-input" placeholder="Dell GPU Key" autocomplete="off" />
         <button id="connect" class="btn-connect">Connect</button>
       </div>
-      <a href="#studio" class="btn-cta-nav">Open Studio</a>
+      <a href="#studio" class="btn-cta-nav">Sign Up Free</a>
     </div>
   </nav>
 
-  <!-- ========== HERO ========== -->
+  <!-- ========== HERO (SonoAI Design Reference) ========== -->
   <section id="hero" class="hero-section">
-    <!-- Aurora background blobs -->
-    <div class="aurora-wrap" aria-hidden="true">
-      <div class="aurora-blob aurora-blob-1"></div>
-      <div class="aurora-blob aurora-blob-2"></div>
-      <div class="aurora-blob aurora-blob-3"></div>
+    <!-- Perspective Grid Floor -->
+    <div class="perspective-grid" aria-hidden="true"></div>
+
+    <!-- Vertical Radiant Neon Beams (Signature SonoAI Background) -->
+    <div class="neon-beams-wrap" aria-hidden="true">
+      <div class="neon-beam beam-1"></div>
+      <div class="neon-beam beam-2"></div>
+      <div class="neon-beam beam-3"></div>
+      <div class="neon-beam beam-4"></div>
+      <div class="neon-beam beam-5"></div>
+      <div class="neon-beam beam-6"></div>
+      <div class="neon-beam beam-7"></div>
     </div>
 
-    <!-- AI Orb centered in hero -->
+    <!-- Interactive AI Character Orb Centered -->
     <div id="hero-orb-container" class="hero-orb-container"></div>
 
+    <!-- Floating Voice Sample Card Left (SonoAI Soft Yellow) -->
+    <div class="floating-card floating-card--left" id="card-sample-nova">
+      <div class="fc-header">
+        <div class="fc-title-group">
+          <h4 class="fc-title">Kisah Sang Rosul</h4>
+          <span class="fc-meta">3.04 · 140bpm</span>
+        </div>
+        <button class="fc-like-btn" id="fc-like-btn" aria-label="Favorite">♡</button>
+      </div>
+      <div class="fc-player-row">
+        <button class="fc-play-btn" id="fc-play-left" aria-label="Play sample">
+          <span class="fc-play-icon">▶</span>
+        </button>
+        <div class="fc-waveform" id="fc-wave-left">
+          <span class="bar" style="--h: 12px;"></span>
+          <span class="bar" style="--h: 22px;"></span>
+          <span class="bar" style="--h: 16px;"></span>
+          <span class="bar" style="--h: 28px;"></span>
+          <span class="bar" style="--h: 34px;"></span>
+          <span class="bar" style="--h: 20px;"></span>
+          <span class="bar" style="--h: 26px;"></span>
+          <span class="bar" style="--h: 38px;"></span>
+          <span class="bar" style="--h: 30px;"></span>
+          <span class="bar" style="--h: 18px;"></span>
+          <span class="bar" style="--h: 24px;"></span>
+          <span class="bar" style="--h: 32px;"></span>
+          <span class="bar" style="--h: 20px;"></span>
+          <span class="bar" style="--h: 14px;"></span>
+        </div>
+      </div>
+      <div class="fc-footer">
+        <span class="fc-badge"><span class="badge-dot">●</span> Ai Voice</span>
+        <span class="fc-time">Created 40m Ago</span>
+      </div>
+    </div>
+
+    <!-- Floating Audio Card Right (SonoAI Soft Pink) -->
+    <div class="floating-card floating-card--right" id="card-sample-echo">
+      <div class="fc-header">
+        <h4 class="fc-title">Ai Vote Results</h4>
+        <span class="fc-menu-dots">⋮</span>
+      </div>
+      <div class="fc-waveform fc-waveform--pink" id="fc-wave-right">
+        <span class="bar" style="--h: 10px;"></span>
+        <span class="bar" style="--h: 18px;"></span>
+        <span class="bar" style="--h: 26px;"></span>
+        <span class="bar" style="--h: 16px;"></span>
+        <span class="bar" style="--h: 30px;"></span>
+        <span class="bar" style="--h: 22px;"></span>
+        <span class="bar" style="--h: 34px;"></span>
+        <span class="bar" style="--h: 20px;"></span>
+        <span class="bar" style="--h: 28px;"></span>
+        <span class="bar" style="--h: 14px;"></span>
+        <span class="bar" style="--h: 24px;"></span>
+        <span class="bar" style="--h: 12px;"></span>
+      </div>
+      <div class="fc-time-row">
+        <span>01:23</span>
+        <span>01:23</span>
+      </div>
+    </div>
+
     <div class="hero-content">
-      <div class="hero-eyebrow">Neural Voice Studio</div>
-      <h1 class="hero-headline">AI Voice,<br><span class="gradient-text">Perfected.</span></h1>
-      <p class="hero-subhead">Craft studio-quality speech with neural voice models.<br>Run it on your GPU.</p>
+      <h1 class="hero-headline">AI—VOICE CHANGER</h1>
+      <p class="hero-subhead">
+        The AI Voice Generator streamlines the video creation process, allowing you to create high-quality content in a fraction of the time.
+      </p>
+
       <div class="hero-cta-row">
-        <a href="#studio" class="btn-primary">Try Free</a>
-        <a href="#voice-agents" class="btn-ghost">Meet the Voices</a>
+        <a href="#studio" class="btn-sono-primary">Start For Free</a>
+        <a href="#voice-agents" class="btn-sono-secondary">
+          <span class="btn-icon-circle">▷</span> Watch Auditions
+        </a>
       </div>
 
-      <div class="hero-stats-row">
-        <div class="stat-pill">
-          <span class="stat-num">82M</span>
-          <span class="stat-label">Params</span>
+      <!-- SonoAI Signature Bottom Stats Capsule Bar -->
+      <div class="hero-stats-capsule">
+        <div class="sc-stat">
+          <span class="sc-num">90%</span>
+          <span class="sc-label">Cost Saving</span>
         </div>
-        <div class="stat-sep"></div>
-        <div class="stat-pill">
-          <span class="stat-num">24 kHz</span>
-          <span class="stat-label">Broadcast Audio</span>
+        <div class="sc-divider"></div>
+        <div class="sc-stat">
+          <span class="sc-num">24,000+</span>
+          <span class="sc-label">Scaled Production</span>
         </div>
-        <div class="stat-sep"></div>
-        <div class="stat-pill">
-          <span class="stat-num">100%</span>
-          <span class="stat-label">Private GPU</span>
+        <div class="sc-divider"></div>
+        <div class="sc-stat">
+          <span class="sc-num">1000+</span>
+          <span class="sc-label">Boost Engagement</span>
         </div>
-        <div class="stat-sep"></div>
-        <div class="stat-pill">
-          <span class="stat-num">RTX 3050 Ti</span>
-          <span class="stat-label">CUDA Accelerated</span>
+        <div class="sc-divider"></div>
+        <div class="sc-avatars">
+          <div class="avatar-stack">
+            <span class="avatar-circle av-1">👩🏻</span>
+            <span class="avatar-circle av-2">🧔🏽</span>
+            <span class="avatar-circle av-3">👱🏼‍♀️</span>
+          </div>
+          <div class="sc-avatar-info">
+            <span class="sc-num">2000+</span>
+            <span class="sc-label">Active Users</span>
+          </div>
         </div>
       </div>
     </div>
@@ -97,7 +178,7 @@
     <div class="container">
       <div class="section-label">Voice Characters</div>
       <h2 class="section-title">Meet the <span class="gradient-text">Voices</span></h2>
-      <p class="section-sub">Curated AI personalities — each with a unique acoustic signature and character.</p>
+      <p class="section-sub">Curated AI personalities — each with high-fidelity 24kHz audition audio layered with ambient harmonic chord pads.</p>
 
       <div id="agents-grid" class="agents-grid">
         <!-- Populated by app.js -->
@@ -115,7 +196,7 @@
     <div class="container">
       <div class="section-label">Under the Hood</div>
       <h2 class="section-title">The <span class="gradient-text">Stack</span></h2>
-      <p class="section-sub">Purpose-built for local GPU inference — no cloud, no latency, no data leaving your machine.</p>
+      <p class="section-sub">Purpose-built for local GPU inference — no cloud, no subscription fees, no data leaving your machine.</p>
 
       <div class="arch-columns">
         <!-- Speech Engine -->
@@ -159,7 +240,7 @@
             </svg>
           </div>
           <h3 class="arch-heading">GPU Delivery</h3>
-          <p class="arch-desc">NVIDIA RTX 3050 Ti with CUDA acceleration. Runs fully on-device over LAN or Tailscale — 90% cheaper than cloud TTS, with broadcast-quality 24kHz audio.</p>
+          <p class="arch-desc">NVIDIA RTX 3050 Ti with CUDA acceleration. Runs fully on-device over LAN or Tailscale — broadcast-quality 24kHz audio without cloud bills.</p>
           <div class="arch-tags">
             <span class="tag">RTX 3050 Ti</span>
             <span class="tag">CUDA</span>
@@ -203,7 +284,7 @@
     <div class="container">
       <div class="section-label">Synthesis Workspace</div>
       <h2 class="section-title">The <span class="gradient-text">Studio</span></h2>
-      <p class="section-sub">Craft studio-quality speech. Select a voice, write your script, and hit Synthesize.</p>
+      <p class="section-sub">Craft studio-quality speech. Draft with the AI Script Assistant, select your voice, and hit Synthesize.</p>
 
       <div class="studio-card">
         <!-- Text area -->
@@ -261,7 +342,7 @@
             maxlength="4000"
             rows="6"
             placeholder="Type or paste your narration here…"
-          >Welcome to SynthTone. This is your studio-grade voice workspace, powered by neural speech models running on your GPU server.</textarea>
+          >Welcome to SynthTone. This is your studio-grade voice workspace, powered by neural speech models running on your Dell GPU server.</textarea>
         </div>
 
         <!-- Voice grid selector -->
@@ -274,10 +355,10 @@
           <!-- hidden select kept for form submission logic -->
           <select id="voice" class="voice-select-hidden" aria-hidden="true">
             <option value="af_heart">af_heart</option>
+            <option value="bm_george">bm_george</option>
+            <option value="bf_emma">bf_emma</option>
             <option value="af_bella">af_bella</option>
             <option value="am_adam">am_adam</option>
-            <option value="bf_emma">bf_emma</option>
-            <option value="bm_george">bm_george</option>
           </select>
         </div>
 
@@ -344,18 +425,18 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <span class="brand-name">Synth<span class="brand-accent">Tone</span></span>
-        <span class="footer-tagline">Neural Voice Studio</span>
+        <span class="brand-name">SYNTHTONE</span>
+        <span class="footer-tagline">Studio-Grade AI Voice Production</span>
       </div>
       <div class="footer-links">
         <a href="#hero">Home</a>
         <a href="#voice-agents">Voices</a>
         <a href="#architecture">Architecture</a>
         <a href="#studio">Studio</a>
-        <a href="/docs" target="_blank">API Docs</a>
+        <a href="https://github.com/Hari-Aditya-003/SynthTone" target="_blank" rel="noopener">GitHub</a>
       </div>
       <div class="footer-copy">
-        © 2026 Hari Aditya · MIT License · Private local GPU inference
+        © 2026 Hari Aditya · Released under MIT License · Hosted with GitHub Pages
       </div>
     </div>
   </footer>
@@ -366,6 +447,6 @@
   <!-- Hidden global audio for orb sync -->
   <audio id="global-player" style="display:none;"></audio>
 
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

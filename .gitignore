@@ -7,6 +7,8 @@ data/
 model-cache/
 *.wav
 *.mp3
+!web/demos/*.wav
+!web/demos/*.mp3
 .DS_Store
 *.zip
 dist/

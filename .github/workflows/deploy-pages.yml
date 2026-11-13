@@ -1,0 +1,44 @@
+name: Deploy SynthTone to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare Web Assets
+        run: |
+          mkdir -p web/demos
+          cp -r ai-character-orb web/components/ai-orb-standalone || true
+          cp -f ai-character-orb/ai-orb.js web/components/ai-orb/ai-orb.js || true
+          cp -f ai-character-orb/ai-orb.css web/components/ai-orb/ai-orb.css || true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './web'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

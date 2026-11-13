@@ -288,6 +288,10 @@ def agent_demo(agent_id: str):
     if not agent:
         raise HTTPException(404, "Agent not found")
     demo_path = Path(agent["demo_audio_path"])
+    if not demo_path.is_file():
+        alt_path = ROOT_DIR / "web" / "demos" / f"{agent_id}.wav"
+        if alt_path.is_file():
+            demo_path = alt_path
     if demo_path.is_file():
         return FileResponse(str(demo_path), media_type="audio/wav")
     # Fallback: synthesise in memory

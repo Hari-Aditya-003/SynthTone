@@ -1,23 +1,57 @@
 /**
  * SynthTone — Neural Voice Studio Client Application
  * Widescreen Studio UI · Reactive AI Character Orb · Real-time Voice Auditions
+ * Optimized for local Dell GPU servers and static GitHub Pages hosting.
  *
  * @author Hari Aditya
  * @license MIT
  */
 
-import { AICharacterOrb } from "/components/ai-orb/ai-orb.js";
+import { AICharacterOrb } from "./components/ai-orb/ai-orb.js";
 
 // Global State
 let apiKey = localStorage.getItem("synthtone_key") || "";
 let orb = null;
 let voiceAgents = [];
-let availableVoices = [];
 let activeDemoAudio = null;
 let activePlayingAgentId = null;
 let pollTimer = null;
 
 const globalAudio = document.getElementById("global-player");
+
+// Fallback Voice Agents (allows 100% interactive functionality on GitHub Pages)
+const STATIC_AGENTS = [
+  {
+    id: "nova",
+    name: "Nova",
+    tagline: "Warm Narrator",
+    description: "A warm, expressive feminine voice perfect for storytelling and empathetic explainer narration.",
+    model_id: "kokoro",
+    builtin_voice: "af_heart",
+    personality: "Optimistic, nurturing, clear-spoken.",
+    demo_audio_path: "./demos/nova.wav",
+  },
+  {
+    id: "echo",
+    name: "Echo",
+    tagline: "Deep Professional",
+    description: "A deep authoritative masculine voice for corporate narration, documentaries, and commanding presence.",
+    model_id: "kokoro",
+    builtin_voice: "bm_george",
+    personality: "Composed, formal, gravitas.",
+    demo_audio_path: "./demos/echo.wav",
+  },
+  {
+    id: "lyra",
+    name: "Lyra",
+    tagline: "Crisp British",
+    description: "A crisp British feminine voice for educational content, refined presentations, and luxury audiobooks.",
+    model_id: "kokoro",
+    builtin_voice: "bf_emma",
+    personality: "Elegant, precise, articulate.",
+    demo_audio_path: "./demos/lyra.wav",
+  },
+];
 
 // Helper: Auth Headers
 function getAuthHeaders(extra = {}) {
@@ -29,14 +63,14 @@ function getAuthHeaders(extra = {}) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// Toast Notification System (replaces all window.alert)
+// Toast Notification System (replaces window.alert)
 // ══════════════════════════════════════════════════════════════════════════
 export function showToast(message, type = "info", durationMs = 3500) {
   const container = document.getElementById("toast-container");
   if (!container) return;
 
   const toast = document.createElement("div");
-  toast.className = `toast toast--${type}`;
+  toast.className = `toast toast--${type} toast-${type}`;
 
   const iconMap = {
     success: "✓",
@@ -51,7 +85,6 @@ export function showToast(message, type = "info", durationMs = 3500) {
 
   container.appendChild(toast);
 
-  // Trigger animation frame
   requestAnimationFrame(() => {
     toast.classList.add("toast--visible");
   });
@@ -84,14 +117,66 @@ function initAIOrb() {
       orb.attachAudio(globalAudio);
     }
 
-    // Parallax mouse tracking
+    // 3D Parallax mouse tracking
     window.addEventListener("mousemove", (e) => {
       if (orb) {
         orb.trackMouse(e.pageX, e.pageY);
       }
     });
   } catch (err) {
-    console.warn("AI Character Orb initialization error:", err);
+    console.warn("AI Character Orb initialization warning:", err);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SonoAI Hero Floating Cards Wire-up
+// ══════════════════════════════════════════════════════════════════════════
+function initFloatingCards() {
+  const fcPlayBtn = document.getElementById("fc-play-left");
+  const fcWaveLeft = document.getElementById("fc-wave-left");
+  const fcLikeBtn = document.getElementById("fc-like-btn");
+  const fcCardRight = document.getElementById("card-sample-echo");
+  const fcWaveRight = document.getElementById("fc-wave-right");
+
+  // Left card: Play Nova sample
+  if (fcPlayBtn) {
+    fcPlayBtn.addEventListener("click", () => {
+      const nova = voiceAgents.find((a) => a.id === "nova") || STATIC_AGENTS[0];
+      const card = document.getElementById("agent-card-nova");
+      const cardBtn = document.getElementById("btn-demo-nova");
+
+      if (activePlayingAgentId === "nova") {
+        stopCurrentAudition();
+        fcPlayBtn.querySelector(".fc-play-icon").textContent = "▶";
+        if (fcWaveLeft) fcWaveLeft.classList.remove("is-animating");
+      } else {
+        toggleAgentAudition(nova, cardBtn, card);
+        fcPlayBtn.querySelector(".fc-play-icon").textContent = "⏸";
+        if (fcWaveLeft) fcWaveLeft.classList.add("is-animating");
+      }
+    });
+  }
+
+  // Left card: Favorite heart button
+  if (fcLikeBtn) {
+    fcLikeBtn.addEventListener("click", () => {
+      const isLiked = fcLikeBtn.classList.toggle("liked");
+      fcLikeBtn.textContent = isLiked ? "♥" : "♡";
+      if (orb) orb.setExpression(isLiked ? "hearts" : "happy");
+      showToast(isLiked ? "Added to your voice favorites!" : "Removed from favorites.", "info", 1800);
+    });
+  }
+
+  // Right card: Hover reaction
+  if (fcCardRight) {
+    fcCardRight.addEventListener("mouseenter", () => {
+      if (fcWaveRight) fcWaveRight.classList.add("is-animating");
+      if (orb && activePlayingAgentId === null) orb.setExpression("stars");
+    });
+    fcCardRight.addEventListener("mouseleave", () => {
+      if (fcWaveRight) fcWaveRight.classList.remove("is-animating");
+      if (orb && activePlayingAgentId === null) orb.setExpression("neutral");
+    });
   }
 }
 
@@ -104,18 +189,15 @@ async function loadVoiceAgents() {
 
   try {
     const res = await fetch("/api/agents");
-    if (!res.ok) throw new Error("Failed to load voice agents");
+    if (!res.ok) throw new Error("Backend not reached, using static demo agents");
     voiceAgents = await res.json();
-    renderVoiceAgents(voiceAgents);
-    populateVoiceGrid(voiceAgents);
-  } catch (err) {
-    console.error("Error loading voice agents:", err);
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">
-        Unable to load voice characters. Is the SynthTone backend running?
-      </div>
-    `;
+  } catch {
+    // Seamless fallback for GitHub Pages hosting
+    voiceAgents = STATIC_AGENTS;
   }
+
+  renderVoiceAgents(voiceAgents);
+  populateVoiceGrid(voiceAgents);
 }
 
 function renderVoiceAgents(agents) {
@@ -129,7 +211,6 @@ function renderVoiceAgents(agents) {
     card.className = "agent-card";
     card.id = `agent-card-${agent.id}`;
 
-    // Map orb CSS gradient modifier
     const orbMod = ["nova", "echo", "lyra"].includes(agent.id) ? `agent-orb--${agent.id}` : "agent-orb--default";
 
     card.innerHTML = `
@@ -139,7 +220,7 @@ function renderVoiceAgents(agents) {
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-quote">"${escapeHtml(agent.personality || "Studio ready.")}"</div>
       <div class="agent-spec">
-        <span>${escapeHtml(agent.model_id.toUpperCase())}</span> · 
+        <span>${escapeHtml((agent.model_id || "kokoro").toUpperCase())}</span> · 
         <span>${escapeHtml(agent.builtin_voice || "default")}</span>
       </div>
       <div class="agent-actions">
@@ -153,7 +234,7 @@ function renderVoiceAgents(agents) {
       </div>
     `;
 
-    // Interactive expression on hover
+    // Interactive expression on card hover
     card.addEventListener("mouseenter", () => {
       if (orb && activePlayingAgentId === null) {
         if (agent.id === "nova") orb.setExpression("happy");
@@ -187,31 +268,46 @@ function renderVoiceAgents(agents) {
 }
 
 function toggleAgentAudition(agent, btn, card) {
-  // If already playing this agent, stop it
   if (activePlayingAgentId === agent.id) {
     stopCurrentAudition();
     return;
   }
 
-  // Stop any other active playback first
   stopCurrentAudition();
 
   activePlayingAgentId = agent.id;
-  card.classList.add("is-playing");
-  btn.classList.add("is-playing");
-  btn.querySelector(".demo-icon").textContent = "◼";
-  btn.querySelector(".demo-text").textContent = "Stop Demo";
+  if (card) card.classList.add("is-playing");
+  if (btn) {
+    btn.classList.add("is-playing");
+    btn.querySelector(".demo-icon").textContent = "◼";
+    btn.querySelector(".demo-text").textContent = "Stop Demo";
+  }
+
+  // Sync left floating card if Nova is playing
+  const fcPlayBtn = document.getElementById("fc-play-left");
+  const fcWaveLeft = document.getElementById("fc-wave-left");
+  if (agent.id === "nova") {
+    if (fcPlayBtn) fcPlayBtn.querySelector(".fc-play-icon").textContent = "⏸";
+    if (fcWaveLeft) fcWaveLeft.classList.add("is-animating");
+  }
 
   if (orb) {
     orb.setWave(true);
     orb.setState("speaking");
   }
 
-  activeDemoAudio = new Audio(`/api/agents/${encodeURIComponent(agent.id)}/demo`);
-  activeDemoAudio.play().catch((err) => {
-    console.warn("Playback error:", err);
-    showToast("Could not play demo audio.", "error");
-    stopCurrentAudition();
+  // Audio source: prefers static ./demos/ on GitHub Pages, fallback to API
+  const audioUrl = agent.demo_audio_path || `./demos/${agent.id}.wav`;
+  activeDemoAudio = new Audio(audioUrl);
+
+  activeDemoAudio.play().catch(() => {
+    // Fallback attempt to API endpoint
+    activeDemoAudio = new Audio(`/api/agents/${encodeURIComponent(agent.id)}/demo`);
+    activeDemoAudio.play().catch((err) => {
+      console.warn("Audio playback notice:", err);
+      showToast("Playing synthetic preview tone...", "info", 1500);
+      stopCurrentAudition();
+    });
   });
 
   activeDemoAudio.addEventListener("ended", () => {
@@ -219,7 +315,6 @@ function toggleAgentAudition(agent, btn, card) {
   });
 
   activeDemoAudio.addEventListener("error", () => {
-    showToast("Audio stream interrupted.", "error");
     stopCurrentAudition();
   });
 }
@@ -233,15 +328,19 @@ function stopCurrentAudition() {
 
   if (activePlayingAgentId) {
     const card = document.getElementById(`agent-card-${activePlayingAgentId}`);
-    if (card) {
-      card.classList.remove("is-playing");
-      const btn = card.querySelector(`#btn-demo-${activePlayingAgentId}`);
-      if (btn) {
-        btn.classList.remove("is-playing");
-        btn.querySelector(".demo-icon").textContent = "▶";
-        btn.querySelector(".demo-text").textContent = "Audition Voice";
-      }
+    if (card) card.classList.remove("is-playing");
+    const btn = document.getElementById(`btn-demo-${activePlayingAgentId}`);
+    if (btn) {
+      btn.classList.remove("is-playing");
+      btn.querySelector(".demo-icon").textContent = "▶";
+      btn.querySelector(".demo-text").textContent = "Audition Voice";
     }
+
+    const fcPlayBtn = document.getElementById("fc-play-left");
+    const fcWaveLeft = document.getElementById("fc-wave-left");
+    if (fcPlayBtn) fcPlayBtn.querySelector(".fc-play-icon").textContent = "▶";
+    if (fcWaveLeft) fcWaveLeft.classList.remove("is-animating");
+
     activePlayingAgentId = null;
   }
 
@@ -272,13 +371,11 @@ function populateVoiceGrid(agents) {
   ];
 
   voices.forEach((v, idx) => {
-    // Hidden option
     const opt = document.createElement("option");
     opt.value = v.id;
     opt.textContent = `${v.name} (${v.id})`;
     hiddenSelect.appendChild(opt);
 
-    // Clickable Tile
     const tile = document.createElement("div");
     tile.className = `voice-tile ${idx === 0 ? "selected" : ""}`;
     tile.setAttribute("data-voice", v.id);
@@ -310,11 +407,11 @@ function selectVoiceForStudio(voiceId, voiceName) {
     t.classList.toggle("selected", t.getAttribute("data-voice") === voiceId);
   });
 
-  showToast(`Voice set to: ${voiceName || voiceId}`, "info", 2000);
+  showToast(`Voice set to: ${voiceName || voiceId}`, "info", 1800);
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// AI Script Assistant (LLM Integration with Dell GPU Ollama / Neural Templates)
+// AI Script Assistant (with Client-Side Fallback for GitHub Pages)
 // ══════════════════════════════════════════════════════════════════════════
 function initScriptAssistant() {
   const toggleBtn = document.getElementById("btn-toggle-assistant");
@@ -348,6 +445,9 @@ function initScriptAssistant() {
     generateBtn.innerHTML = `<span>⏳</span> Drafting...`;
     if (orb) orb.setState("thinking");
 
+    let scriptText = "";
+    let sourceLabel = "Neural Template";
+
     try {
       const res = await fetch("/api/llm/assist", {
         method: "POST",
@@ -360,30 +460,42 @@ function initScriptAssistant() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Script generation failed");
+      if (res.ok) {
+        const data = await res.json();
+        scriptText = data.script;
+        sourceLabel = data.source === "ollama" ? "Ollama LLM (Dell GPU)" : "Neural Template";
+      } else {
+        throw new Error("Local backend offline");
       }
-
-      const data = await res.json();
-      scriptTextarea.value = data.script;
-      updateTextCounters();
-
-      if (orb) {
-        orb.setState("idle");
-        orb.setExpression("happy");
-      }
-
-      showToast(`Drafted script via ${data.source === "ollama" ? "Ollama LLM" : "Neural Template"} (${data.word_count} words)`, "success");
-      panel.style.display = "none";
-      toggleBtn.classList.remove("active");
-    } catch (err) {
-      console.error(err);
-      showToast("Could not generate script.", "error");
-      if (orb) orb.setState("idle");
-    } finally {
-      generateBtn.disabled = false;
-      generateBtn.innerHTML = `<span>✦</span> Draft Script`;
+    } catch {
+      // Client-side static neural template generator (works on GitHub Pages!)
+      const tone = toneSelect.value;
+      const templates = {
+        cinematic: `In a world where ${topic} defines our horizon, everything begins with a single bold decision. Beyond the noise and through the momentum of change, vision becomes reality. Welcome to the next chapter of ${topic}.`,
+        explainer: `Let's break down ${topic} in simple terms. At its core, the principle is straightforward: seamless efficiency driven by precision architecture. By focusing on fundamental design, it transforms complex workflows into effortless results. That's the power of ${topic}.`,
+        commercial: `Ready to revolutionize how you approach ${topic}? Meet the future of high-performance workflow. Engineered with uncompromising craft, built for creators who demand perfection. Experience ${topic} today.`,
+        storytelling: `The story of ${topic} didn't start in an ordinary place. It began with an ambition to bridge imagination with craft. As the layers unfolded, each moment revealed something extraordinary: a new way to listen, create, and inspire.`,
+        podcast: `Welcome back. Today on the show, we're diving deep into ${topic}. What really happens when you push the boundaries of what's possible? Stay tuned, because this breakdown is going to change how you think about ${topic}.`,
+      };
+      scriptText = templates[tone] || templates.cinematic;
+      sourceLabel = "Neural Template Engine";
     }
+
+    scriptTextarea.value = scriptText;
+    updateTextCounters();
+
+    if (orb) {
+      orb.setState("idle");
+      orb.setExpression("happy");
+    }
+
+    const words = scriptText.trim().split(/\s+/).length;
+    showToast(`Drafted script via ${sourceLabel} (${words} words)`, "success");
+    panel.style.display = "none";
+    toggleBtn.classList.remove("active");
+
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = `<span>✦</span> Draft Script`;
   });
 }
 
@@ -398,7 +510,6 @@ function updateTextCounters() {
 
   const text = scriptInput.value;
   charCount.textContent = text.length;
-
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   wordCount.textContent = words;
 }
@@ -448,15 +559,14 @@ async function handleSynthesize() {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || "Synthesis request failed");
+      throw new Error(err.detail || "Connect your Dell GPU server with an API key to run neural synthesis.");
     }
 
     const data = await res.json();
     showToast(`Job queued (${data.job_ids.length} variation(s)). Processing on GPU...`, "info");
     loadJobs();
   } catch (err) {
-    console.error("Synthesis error:", err);
-    showToast(err.message, "error");
+    showToast(err.message, "error", 4500);
   } finally {
     generateBtn.disabled = false;
     generateBtn.innerHTML = `<span class="btn-synth-icon">✦</span> Synthesize Speech`;
@@ -515,7 +625,7 @@ async function loadJobs(silent = false) {
       jobsList.appendChild(item);
     });
   } catch (err) {
-    if (!silent) console.error("Error loading jobs:", err);
+    if (!silent) console.debug("Jobs polling notice:", err);
   }
 }
 
@@ -524,6 +634,7 @@ async function loadJobs(silent = false) {
 // ══════════════════════════════════════════════════════════════════════════
 document.addEventListener("DOMContentLoaded", () => {
   initAIOrb();
+  initFloatingCards();
   initScriptAssistant();
 
   const scriptInput = document.getElementById("script");
@@ -587,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
     connectBtn.addEventListener("click", () => {
       apiKey = keyInput.value.trim();
       localStorage.setItem("synthtone_key", apiKey);
-      showToast(apiKey ? "API key saved." : "Cleared API key.", "success");
+      showToast(apiKey ? "Dell GPU API key connected." : "Disconnected API key.", "success");
       loadJobs();
     });
   }
@@ -608,10 +719,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load Initial Data
   loadVoiceAgents();
-  loadJobs();
+  loadJobs(true);
 
-  // Background polling for jobs every 3.5 seconds
+  // Background polling for jobs every 4 seconds
   pollTimer = setInterval(() => {
     loadJobs(true);
-  }, 3500);
+  }, 4000);
 });
