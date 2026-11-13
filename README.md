@@ -1,149 +1,149 @@
-# SynthTone
+# SynthTone — Studio-Grade AI Voice Production & Voice Cloning
 
-A local text-to-speech app for Apple Silicon Macs. It uses [MLX Audio](https://github.com/Blaizzy/mlx-audio) to run Hugging Face TTS models through MLX, with a Gradio UI for text, voices, sampling controls, reference audio, and saved audio output.
+[![SynthTone CI](https://github.com/Hari-Aditya-003/SynthTone/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hari-Aditya-003/SynthTone/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CUDA Accelerated](https://img.shields.io/badge/GPU-NVIDIA%20RTX%203050%20Ti-76B900?logo=nvidia)](https://developer.nvidia.com/cuda-zone)
 
-SynthTone is standalone. It can be used directly in the browser or as a small local HTTP speech service for any other tool that can call a local endpoint.
+**SynthTone** is a private, high-performance neural speech synthesis and zero-shot voice cloning studio engineered for **Dell Linux GPU servers** (NVIDIA RTX 3050 Ti / CUDA) with a responsive, futuristic web interface accessible from your MacBook, workstation, or mobile device.
 
-*Forked & adapted from [MLX TTS Studio](https://github.com/rorystandley/mlx-tts-studio).*
+SynthTone includes an interactive **AI Character Orb** that tracks your mouse cursor with 3D sphere parallax, blinks naturally, and dynamically morphs into a fluid soundwave when generating speech or playing audio.
 
-![MLX TTS Studio screenshot](docs/assets/mlx-tts-studio-screenshot.png)
+---
 
-## Requirements
+## 🌟 Core Features
 
-- Apple Silicon Mac running arm64 Python.
-- Python 3.12.
-- [`uv`](https://docs.astral.sh/uv/) for dependency management.
-- Enough free disk space for whichever Hugging Face model weights you download.
+- **Futuristic Studio UI:** Widescreen obsidian theme with neon cyan & magenta aurora beams, floating glassmorphic audio visualizers, and real-time generation metrics.
+- **Interactive AI Character Orb:**
+  - **3D Mouse Tracking:** Inner digital matrix screen and glowing slit eyes (`| |`) follow your cursor anywhere on screen.
+  - **Fluid Soundwave Mode:** Morphs into an undulating chromatic waveform during speech synthesis or playback.
+  - **Live Mic Reactivity:** Directly test microphone input with Web Audio API frequency analysis.
+  - **Reusable Module:** Self-contained in [`ai-character-orb/`](ai-character-orb/) for immediate use in other projects!
+- **Multi-Tier Neural Speech Engines:**
+  - **Kokoro 82M:** Ultra-fast, natural speech with 5 built-in voices (Heart, Bella, Adam, Emma, George); CPU and GPU accelerated.
+  - **Chatterbox Nano 110M:** Zero-shot voice cloning optimized for 4 GB VRAM GPUs like the RTX 3050 Ti.
+  - **Chatterbox Turbo 350M:** Studio-fidelity expressive voice cloning with custom reference audio prompts.
+- **Engineered for Dell GPU Linux Servers:**
+  - Single heavy neural model in memory to prevent VRAM pressure on 4 GB GPUs.
+  - Explicit post-generation VRAM garbage collection (`torch.cuda.empty_cache()`).
+  - Live Dell GPU telemetry (CUDA status, VRAM allocation, GPU device name).
+- **Private Audio Pipeline:**
+  - SQLite persistent job queue and generation history.
+  - EBU R128 (-16 LUFS) broadcast loudness normalization via FFmpeg.
+  - Lossless WAV and 192kbps MP3 exports.
 
-## Model choice
+---
 
-The app includes `kugelaudio/kugelaudio-0-open`, because it is the strongest strictly open-source preset here and is MIT licensed. It is a 7B model, so it is happiest on Macs with 32 GB+ unified memory and can take several minutes on the first run.
+## 🖥️ Requirements & Target Hardware
 
-The default startup preset is now `mlx-community/Kokoro-82M-bf16`, because it is the most supportable choice while another local LLM is already running. It is small, fast, and much less likely to push a 24 GB Apple Silicon machine into memory pressure.
+- **Server:** Dell Linux system (x86_64, Ubuntu 22.04+ or Debian 12 recommended).
+- **GPU:** NVIDIA GeForce RTX 3050 Ti (4 GB VRAM) or any modern NVIDIA GPU with NVIDIA Container Toolkit.
+- **Docker:** Docker Engine + Docker Compose plugin (`docker compose`).
+- **Client:** Any modern browser (MacBook Safari/Chrome, iPhone, iPad, PC).
 
-The app also includes practical fallbacks:
+---
 
-- `mlx-community/Voxtral-4B-TTS-2603-mlx-bf16` for strong open-weight quality and multilingual voice presets.
-- `mlx-community/Qwen3-TTS-12Hz-1.7B-VoiceDesign-bf16` for promptable voice design.
-- `mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-bf16` for named Qwen3 speakers.
-- `mlx-community/chatterbox-turbo-fp16` for expressive TTS and reference-audio workflows.
-- `mlx-community/Kokoro-82M-bf16` for very fast local generation on smaller Macs.
+## 🚀 Quickstart (Dell GPU Server)
 
-Check each Hugging Face model card before commercial use. "Open weights" and "open-source license" are not always the same thing.
-
-## Run
-
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Hari-Aditya-003/SynthTone.git
 cd SynthTone
-uv sync
-./run.sh
 ```
 
-Then open:
+### 2. Launch with One Command
+Run the automated launcher:
+```bash
+./start.sh
+```
+Or manually configure environment and launch via Docker Compose:
+```bash
+cp .env.example .env
+
+# Generate a secure 32+ character API key:
+python3 -c 'import secrets; print(secrets.token_urlsafe(32))'
+# Paste into SYNTHTONE_API_KEY in .env
+
+# Build and start container
+docker compose up -d
+docker compose logs -f synthtone
+```
+
+### 3. Access the Studio
+
+The service listens on `http://127.0.0.1:8000`.
+
+To connect securely from your MacBook or workstation across your local network:
+```bash
+# Forward port 8000 through SSH:
+ssh -L 8000:127.0.0.1:8000 <dell-username>@<dell-server-ip>
+```
+Then open your browser to:
+```text
+http://127.0.0.1:8000
+```
+Paste your API key from `.env` into the top bar to connect.
+
+---
+
+## 🔮 Standalone AI Character Orb Component
+
+The interactive AI companion is packaged as a standalone, zero-dependency module in [`ai-character-orb/`](ai-character-orb/):
+
+```html
+<!-- Drop into any web page -->
+<link rel="stylesheet" href="./ai-character-orb/ai-orb.css" />
+<div id="orb"></div>
+
+<script type="module">
+  import { AICharacterOrb } from "./ai-character-orb/ai-orb.js";
+
+  const orb = new AICharacterOrb("#orb", {
+    size: 260,
+    mode: "eyes", // 'eyes' | 'wave' | 'speaking' | 'listening'
+    bubbleText: "Um...how is the weather",
+  });
+</script>
+```
+
+Open [`ai-character-orb/index.html`](ai-character-orb/index.html) in your browser for an interactive playground! See the [AI Orb Documentation](ai-character-orb/README.md) for React, Vue, Next.js, and Web Component guides.
+
+---
+
+## 📁 Repository Structure
 
 ```text
-http://127.0.0.1:7860
+SynthTone/
+├── ai-character-orb/       # Reusable, standalone AI Character Orb component
+│   ├── ai-orb.js           # ES6 module & Web Component
+│   ├── ai-orb.css          # Orb styling, glassmorphism & animations
+│   ├── index.html          # Interactive standalone demo
+│   ├── reference-images/   # Original design artwork & references
+│   └── README.md           # Standalone integration guide
+├── app/                    # FastAPI backend & neural engines
+│   ├── db.py               # SQLite schema & job queue
+│   ├── engines.py          # Kokoro & Chatterbox model adapters (GPU/CUDA)
+│   └── server.py           # REST API endpoints & static file serving
+├── web/                    # Widescreen Studio UI
+│   ├── index.html          # Main web studio interface
+│   ├── styles.css          # Deep obsidian & neon aurora theme
+│   ├── app.js              # Client state, Web Audio & telemetry
+│   └── components/ai-orb/  # Embedded AI orb assets
+├── docs/                   # Architectural & technical documentation
+│   ├── ARCHITECTURE.md     # System architecture & hardware allocation
+│   ├── DEPLOYMENT.md       # Dell GPU Linux server deployment guide
+│   ├── MODELS.md           # Model specifications & benchmarks
+│   └── PRODUCT.md          # Feature matrix & UI system
+├── Dockerfile              # Container definition with PyTorch & FFmpeg
+├── compose.yaml            # Docker Compose with NVIDIA GPU reservation
+├── start.sh                # Dell GPU server one-click startup script
+├── requirements.txt        # Python dependencies
+├── LICENSE                 # MIT License (Copyright (c) 2026 Hari Aditya)
+└── THIRD_PARTY_NOTICES.md  # Upstream model licenses & attributions
 ```
 
-The first generation with a model downloads its weights from Hugging Face into the normal HF cache. `Download/load selected model` performs that step up front and keeps the model warm in memory for the next generation. KugelAudio and Voxtral are large; Kokoro is the quick smoke-test and low-memory option. Setting `HF_TOKEN` can make Hugging Face downloads more reliable and avoid anonymous rate limits.
+---
 
-Model weights are cached under the Hugging Face hub cache, usually:
+## 📄 License & Attribution
 
-```text
-~/.cache/huggingface/hub/
-```
-
-Use the `Model cache` panel in the app to refresh downloaded model sizes or delete the cache for the currently selected model id. The table also explains what each built-in preset is good for and estimates how suitable it is for the machine currently running the app, based on Apple Silicon/arm64 support and detected unified memory. Deleting a cache does not remove generated audio files; it only removes the downloaded Hugging Face model snapshot/blobs for that model.
-
-Generated audio files are written to `outputs/`, which is intentionally ignored by Git.
-
-## Configuration
-
-These optional environment variables are useful for local runs:
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `GRADIO_SERVER_NAME` | `127.0.0.1` | Bind address for the local server |
-| `GRADIO_SERVER_PORT` | `7860` | Local server port |
-| `DEFAULT_TTS_PRESET_LABEL` | `Kokoro 82M bf16 - fast local` | Startup preset label |
-| `HF_TOKEN` | unset | Hugging Face token for higher rate limits/private models |
-| `HF_HOME` | `~/.cache/huggingface` | Hugging Face cache root |
-| `HF_HUB_CACHE` | derived from `HF_HOME` | Hugging Face hub cache directory |
-
-## Local API
-
-The same process serves the Gradio UI and a local API:
-
-- `GET /health` reports runtime, cache, output, default model, and loaded model state.
-- `GET /models` lists presets plus cache rows.
-- `POST /synthesize` returns JSON with a generated local audio file path.
-- `POST /v1/audio/speech` returns audio bytes in a small OpenAI-compatible shape.
-
-Example:
-
-```bash
-curl -X POST http://127.0.0.1:7860/synthesize \
-  -H 'Content-Type: application/json' \
-  -d '{"input":"Hello from local MLX TTS.","model":"mlx-community/Kokoro-82M-bf16","voice":"af_heart","lang_code":"a","audio_format":"wav"}'
-```
-
-## Using this from another local app
-
-Start MLX TTS Studio first, then call it over localhost from your app. For most local apps, `POST /synthesize` is the simplest integration because it returns JSON with an `audio_path` that another process on the same machine can play.
-
-```bash
-curl -s -X POST http://127.0.0.1:7860/synthesize \
-  -H 'Content-Type: application/json' \
-  -d '{"input":"Your app can play this returned file.","model":"mlx-community/Kokoro-82M-bf16","voice":"af_heart","lang_code":"a","audio_format":"wav"}'
-```
-
-Example response:
-
-```json
-{
-  "audio_path": "/path/to/mlx-tts-studio/outputs/example.wav",
-  "duration_seconds": 2.3,
-  "model": "mlx-community/Kokoro-82M-bf16",
-  "voice": "af_heart",
-  "format": "wav"
-}
-```
-
-If your client expects audio bytes instead of a local file path, use the OpenAI-style endpoint:
-
-```bash
-curl -X POST http://127.0.0.1:7860/v1/audio/speech \
-  -H 'Content-Type: application/json' \
-  -d '{"input":"Return this as audio bytes.","model":"mlx-community/Kokoro-82M-bf16","voice":"af_heart","response_format":"wav"}' \
-  --output speech.wav
-```
-
-Keep requests serialized from the client side if you are using large models. The server also uses an internal generation lock so only one synthesis runs at a time.
-
-## Tips
-
-- Use `Download/load selected model` before the first Voxtral or KugelAudio generation.
-- Use `Model cache` to see which models are taking disk space.
-- Use `Kokoro 82M bf16` if you want to verify the app quickly or keep memory pressure low.
-- Use `Clear loaded model` before switching away from a large model.
-- For Qwen3 VoiceDesign, put the voice description in `Instruction`.
-- Reference audio support depends on the selected model.
-
-## Development
-
-Run the focused checks before committing:
-
-```bash
-uv run ruff format .
-uv run ruff check .
-uv run python -m py_compile app.py tts_service.py
-```
-
-Do not commit model weights, generated audio, local `.env` files, or Hugging Face caches.
-
-GitHub Actions runs the same quality checks plus a lightweight API smoke test on pushes and pull requests. The smoke test does not download model weights.
-
-## License
-
-This project is released under the MIT License. Model weights are distributed separately by their respective authors and may have different licenses or usage terms.
+- **SynthTone** is authored by **Hari Aditya** and released under the [MIT License](LICENSE).
+- Neural models (Kokoro 82M: Apache 2.0; Chatterbox Turbo/Nano: MIT) are governed by their respective licenses as detailed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

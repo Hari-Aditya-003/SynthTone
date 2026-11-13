@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Character Orb — Interactive Standalone Demo</title>
+  <link rel="stylesheet" href="ai-orb.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #06080f;
+      background-image:
+        radial-gradient(circle at 50% 30%, rgba(224, 64, 251, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 20% 80%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+    .demo-header {
+      text-align: center;
+      margin-bottom: 24px;
+      z-index: 10;
+    }
+    .demo-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #00f0ff 80%, #e040fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .demo-header p {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .stage {
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .controls-panel {
+      background: rgba(18, 22, 34, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: rgba(0, 240, 255, 0.4);
+      color: #00f0ff;
+      transform: translateY(-1px);
+    }
+    .btn.active {
+      background: linear-gradient(135deg, #00f0ff 0%, #7928ca 100%);
+      border-color: transparent;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+    }
+    .bubble-input {
+      background: rgba(10, 14, 24, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      outline: none;
+      width: 220px;
+    }
+    .bubble-input:focus {
+      border-color: #00f0ff;
+    }
+    .instructions {
+      margin-top: 24px;
+      color: #64748b;
+      font-size: 13px;
+      text-align: center;
+      max-width: 480px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-header">
+    <h1>SynthTone AI Character Orb</h1>
+    <p>Move your mouse to track gaze • Click orb to morph into fluid soundwave</p>
+  </div>
+
+  <div class="stage">
+    <div id="ai-orb-demo"></div>
+  </div>
+
+  <div class="controls-panel">
+    <button id="btn-eyes" class="btn active">👁️ Eye Tracking Mode</button>
+    <button id="btn-wave" class="btn">🌊 Fluid Wave Mode</button>
+    <button id="btn-straight" class="btn">🎯 Look Straight</button>
+    <button id="btn-mic" class="btn">🎙️ Live Mic Reactivity</button>
+    <input id="bubble-text" class="bubble-input" type="text" value="Um...how is the weather" placeholder="Dialogue bubble..." />
+    <button id="btn-set-bubble" class="btn">💬 Update Bubble</button>
+  </div>
+
+  <div class="instructions">
+    This standalone AI character module is self-contained in <code>ai-character-orb/</code> and can be dropped into any React, Vue, Next.js, or HTML5 application.
+  </div>
+
+  <script type="module">
+    import { AICharacterOrb } from "./ai-orb.js";
+
+    const orb = new AICharacterOrb("#ai-orb-demo", {
+      size: 270,
+      mode: "eyes",
+      bubbleText: "Um...how is the weather",
+    });
+
+    const btnEyes = document.getElementById("btn-eyes");
+    const btnWave = document.getElementById("btn-wave");
+    const btnStraight = document.getElementById("btn-straight");
+    const btnMic = document.getElementById("btn-mic");
+    const bubbleInput = document.getElementById("bubble-text");
+    const btnSetBubble = document.getElementById("btn-set-bubble");
+
+    function setActiveBtn(activeBtn) {
+      [btnEyes, btnWave, btnStraight, btnMic].forEach(b => b.classList.remove("active"));
+      if (activeBtn) activeBtn.classList.add("active");
+    }
+
+    btnEyes.addEventListener("click", () => {
+      orb.setMode("eyes");
+      orb.lookStraight(false);
+      setActiveBtn(btnEyes);
+    });
+
+    btnWave.addEventListener("click", () => {
+      orb.setMode("wave");
+      setActiveBtn(btnWave);
+    });
+
+    let straight = false;
+    btnStraight.addEventListener("click", () => {
+      straight = !straight;
+      orb.lookStraight(straight);
+      btnStraight.classList.toggle("active", straight);
+    });
+
+    btnMic.addEventListener("click", async () => {
+      await orb.listenMic();
+      setActiveBtn(btnMic);
+    });
+
+    btnSetBubble.addEventListener("click", () => {
+      orb.setBubble(bubbleInput.value.trim());
+    });
+
+    bubbleInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        orb.setBubble(bubbleInput.value.trim());
+      }
+    });
+  </script>
+</body>
+</html>

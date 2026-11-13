@@ -1,0 +1,29 @@
+services:
+  synthtone:
+    build: .
+    container_name: synthtone-studio
+    restart: unless-stopped
+    # Bind to localhost; access remotely via Tailscale or SSH tunnel
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file: .env
+    environment:
+      SYNTHTONE_DATA_DIR: /data
+      HF_HOME: /models/huggingface
+      SYNTHTONE_DEVICE: auto
+    volumes:
+      - synthtone_data:/data
+      - synthtone_models:/models
+    # NVIDIA CUDA GPU reservation for Dell Linux server (RTX 3050 Ti / GeForce / RTX)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    shm_size: "2gb"
+
+volumes:
+  synthtone_data:
+  synthtone_models:

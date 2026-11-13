@@ -1,4 +1,4 @@
-name: CI
+name: SynthTone CI
 
 on:
   push:
@@ -15,67 +15,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: Quality and API Smoke Test
-    runs-on: macos-14
-    timeout-minutes: 30
+  test:
+    name: SynthTone Syntax & Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --locked
-
-      - name: Check formatting
-        run: uv run ruff format --check .
-
-      - name: Lint
-        run: uv run ruff check .
-
-      - name: Compile Python files
-        run: uv run python -m py_compile app.py tts_service.py
-
-      - name: API smoke test without model download
+      - name: Install minimal test requirements
         run: |
-          uv run python - <<'PY'
-          from fastapi.testclient import TestClient
-          from app import app
+          python -m pip install --upgrade pip
+          pip install numpy pytest fastapi soundfile
 
-          client = TestClient(app)
+      - name: Compile Python modules
+        run: |
+          python -m py_compile app/db.py app/engines.py app/server.py tests/test_split.py
 
-          health = client.get("/health")
-          assert health.status_code == 200
-          health_body = health.json()
-          assert health_body["status"] == "ok"
-          assert health_body["mlx_supported"] is True
-          assert health_body["default_model"] == "mlx-community/Kokoro-82M-bf16"
-
-          models = client.get("/models")
-          assert models.status_code == 200
-          models_body = models.json()
-          assert models_body["default_model"] == "mlx-community/Kokoro-82M-bf16"
-          assert len(models_body["presets"]) >= 5
-
-          missing_text = client.post(
-              "/synthesize",
-              json={"model": "mlx-community/Kokoro-82M-bf16"},
-          )
-          assert missing_text.status_code == 400
-
-          bad_format = client.post(
-              "/v1/audio/speech",
-              json={"input": "hello", "response_format": "mp3"},
-          )
-          assert bad_format.status_code == 400
-          PY
+      - name: Run Unit Tests
+        run: |
+          pytest tests/

@@ -1,0 +1,238 @@
+/* ==========================================================================
+   AI Character Orb Component — SynthTone Interactive Visualizer
+   Re-usable in any web project (React, Vue, Vanilla JS, Next.js)
+   ========================================================================== */
+
+:root {
+  --orb-size: 260px;
+  --orb-cyan: #00f0ff;
+  --orb-magenta: #e040fb;
+  --orb-blue: #3b82f6;
+  --orb-purple: #7928ca;
+  --orb-bg-dark: #070913;
+  --orb-glow: rgba(0, 240, 255, 0.45);
+}
+
+.ai-orb-container {
+  position: relative;
+  width: var(--orb-size);
+  height: calc(var(--orb-size) + 80px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  user-select: none;
+}
+
+/* Floating dialogue bubble above the orb */
+.ai-orb-bubble {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: rgba(18, 22, 34, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.15);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+}
+
+.ai-orb-bubble.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+}
+
+/* Particle Canvas above and around orb */
+.ai-orb-particles-canvas {
+  position: absolute;
+  top: 10px;
+  width: calc(var(--orb-size) * 1.3);
+  height: calc(var(--orb-size) * 1.2);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* The Glass Outer Sphere */
+.ai-orb-sphere {
+  position: relative;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(30, 41, 69, 0.85) 0%,
+    rgba(13, 17, 30, 0.95) 55%,
+    rgba(6, 8, 16, 0.98) 100%
+  );
+  box-shadow:
+    inset 0 0 40px rgba(0, 240, 255, 0.25),
+    inset 0 0 70px rgba(224, 64, 251, 0.2),
+    inset 10px 10px 25px rgba(255, 255, 255, 0.15),
+    0 0 35px rgba(0, 240, 255, 0.3),
+    0 0 70px rgba(121, 40, 202, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 600px;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.ai-orb-sphere:hover {
+  box-shadow:
+    inset 0 0 45px rgba(0, 240, 255, 0.35),
+    inset 0 0 85px rgba(224, 64, 251, 0.3),
+    inset 12px 12px 30px rgba(255, 255, 255, 0.25),
+    0 0 45px rgba(0, 240, 255, 0.45),
+    0 0 85px rgba(121, 40, 202, 0.35);
+}
+
+/* Glass Specular Reflection Crescent */
+.ai-orb-specular {
+  position: absolute;
+  top: 6%;
+  left: 12%;
+  width: 65%;
+  height: 45%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    transparent 70%
+  );
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 5;
+  transform: rotate(-22deg);
+}
+
+/* Inner Reactive Head / Screen Plane that tracks mouse with 3D tilt */
+.ai-orb-core-plane {
+  position: relative;
+  width: 58%;
+  height: 38%;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 240, 255, 0.75) 0%,
+    rgba(79, 70, 229, 0.8) 50%,
+    rgba(224, 64, 251, 0.75) 100%
+  );
+  box-shadow:
+    0 0 25px rgba(0, 240, 255, 0.6),
+    0 0 45px rgba(224, 64, 251, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Dot matrix / CRT Scanline Screen Overlay */
+.ai-orb-matrix-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.18) 0px,
+    rgba(0, 0, 0, 0.18) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Eye Mode: Two vertical glowing slit eyes */
+.ai-orb-eyes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 3;
+  transition: opacity 0.25s ease, transform 0.15s ease;
+}
+
+.ai-orb-eye {
+  width: 7px;
+  height: 36px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow:
+    0 0 8px #ffffff,
+    0 0 16px var(--orb-cyan),
+    0 0 24px var(--orb-cyan);
+  transition: height 0.12s ease, transform 0.1s ease;
+  will-change: height, transform;
+}
+
+/* Blinking state */
+.ai-orb-eye.blinking {
+  height: 2px !important;
+}
+
+/* Waveform Canvas inside screen for Speaking / Wavy Mode */
+.ai-orb-waveform-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Mode toggles */
+.ai-orb-container[data-mode="wave"] .ai-orb-eyes,
+.ai-orb-container[data-mode="speaking"] .ai-orb-eyes {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ai-orb-container[data-mode="wave"] .ai-orb-waveform-canvas,
+.ai-orb-container[data-mode="speaking"] .ai-orb-waveform-canvas {
+  opacity: 1;
+}
+
+/* Ambient Pulse when speaking / listening */
+@keyframes orbAmbientPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 35px rgba(0, 240, 255, 0.3),
+      0 0 70px rgba(121, 40, 202, 0.25);
+  }
+  50% {
+    transform: scale(1.025);
+    box-shadow:
+      0 0 55px rgba(0, 240, 255, 0.55),
+      0 0 95px rgba(224, 64, 251, 0.45);
+  }
+}
+
+.ai-orb-sphere.active-speaking {
+  animation: orbAmbientPulse 1.8s ease-in-out infinite;
+}
