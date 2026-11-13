@@ -3,293 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07080f" />
-  <title>SynthTone AI — Private Neural Voice Studio</title>
+  <meta name="theme-color" content="#07060f" />
+  <title>SynthTone — AI Voice Studio</title>
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/components/ai-orb/ai-orb.css" />
 </head>
 <body>
 
-  <!-- Navigation Bar -->
-  <header class="navbar">
+  <!-- ========== NAV ========== -->
+  <nav class="navbar" id="navbar">
     <a href="#" class="nav-brand">
-      <span class="brand-icon">◈</span>
-      <div class="brand-title">SYNTH<span>TONE</span></div>
+      <svg class="brand-logo" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="14" r="13" stroke="url(#lg1)" stroke-width="1.5"/>
+        <path d="M7 14 Q10 8 14 14 Q18 20 21 14" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7c3aed"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="7" y1="14" x2="21" y2="14" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#ec4899"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand-name">Synth<span class="brand-accent">Tone</span></span>
     </a>
-    <nav class="nav-links">
-      <a href="#studio" class="nav-link active">Studio</a>
-      <a href="#voices" class="nav-link">Voice Lab</a>
-      <a href="#history" class="nav-link">Generations</a>
-      <a href="/ai-orb/index.html" target="_blank" class="nav-link">AI Orb Demo ↗</a>
-      <a href="/docs" target="_blank" class="nav-link">API Docs</a>
-    </nav>
+
+    <div class="nav-links">
+      <a href="#hero" class="nav-link">Home</a>
+      <a href="#voice-agents" class="nav-link">Voices</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+      <a href="#studio" class="nav-link">Studio</a>
+      <a href="/docs" target="_blank" class="nav-link">API Docs ↗</a>
+    </div>
+
     <div class="nav-actions">
-      <div id="gpu-telemetry-badge" class="gpu-badge">
-        <span class="dot"></span>
-        <span id="gpu-badge-text">Dell GPU Checking...</span>
+      <div class="key-wrap">
+        <input id="key" type="password" class="key-input" placeholder="API Key" autocomplete="off" />
+        <button id="connect" class="btn-connect">Connect</button>
       </div>
-      <div class="key-input-wrapper">
-        <input id="key" type="password" class="key-input" placeholder="Server API Key..." autocomplete="off"/>
-        <button id="connect" class="btn-icon" style="padding:4px 10px;font-size:12px;">Connect</button>
-      </div>
+      <a href="#studio" class="btn-cta-nav">Open Studio</a>
     </div>
-  </header>
+  </nav>
 
-  <!-- Hero Interactive Showcase -->
-  <section class="hero-showcase">
-    
-    <div class="hero-stage">
-      <!-- Left Floating Audio Card (SonoAI Reference) -->
-      <div class="floating-card-left">
-        <div class="card-header-row">
-          <div>
-            <div class="card-title">Kisah Sang Rosul</div>
-            <div class="card-meta">3.04 · 140bpm</div>
-          </div>
-          <div class="card-heart">♥</div>
-        </div>
-        <div class="card-wave-row">
-          <div class="play-circle" id="sample-card-play">▶</div>
-          <div class="mini-waveform">
-            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-        <div class="card-footer-tag">
-          <div><span class="tag-dot"></span> AI Voice</div>
-          <div>Created 40m Ago</div>
-        </div>
-      </div>
-
-      <!-- Center Interactive AI Character Orb -->
-      <div id="hero-ai-orb-container"></div>
-
-      <!-- Right Floating Voice Tag Card (SonoAI Reference) -->
-      <div class="floating-card-right">
-        <div class="card-header-row" style="margin-bottom:6px;">
-          <div style="font-size:11px;font-weight:700;color:#831843;">AI Voice Results</div>
-          <div style="font-size:12px;color:#9d174d;">•••</div>
-        </div>
-        <div class="mini-waveform" style="margin-bottom:6px;">
-          <span style="background:#db2777;height:12px;"></span>
-          <span style="background:#db2777;height:20px;"></span>
-          <span style="background:#db2777;height:14px;"></span>
-          <span style="background:#db2777;height:24px;"></span>
-          <span style="background:#db2777;height:16px;"></span>
-          <span style="background:#db2777;height:10px;"></span>
-        </div>
-        <div style="font-size:10px;color:#9d174d;display:flex;justify-content:space-between;">
-          <span>01:23</span>
-          <span>01:23</span>
-        </div>
-      </div>
+  <!-- ========== HERO ========== -->
+  <section id="hero" class="hero-section">
+    <!-- Aurora background blobs -->
+    <div class="aurora-wrap" aria-hidden="true">
+      <div class="aurora-blob aurora-blob-1"></div>
+      <div class="aurora-blob aurora-blob-2"></div>
+      <div class="aurora-blob aurora-blob-3"></div>
     </div>
 
-    <!-- Hero Headlines -->
-    <div class="hero-headline">
-      <h1 class="hero-title">AI—<span>VOICE STUDIO</span></h1>
-      <p class="hero-subtitle">
-        Studio-grade neural speech synthesis, high-speed generation, and zero-shot voice cloning powered privately by your Dell GPU server.
-      </p>
-    </div>
+    <!-- AI Orb centered in hero -->
+    <div id="hero-orb-container" class="hero-orb-container"></div>
 
-    <div class="hero-cta-group">
-      <a href="#studio" class="btn-primary-glow"><span>✦</span> Launch Studio</a>
-      <button id="hero-mic-test" class="btn-glass"><span>🎙️</span> Test Mic with AI Orb</button>
-    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Neural Voice Studio</div>
+      <h1 class="hero-headline">AI Voice,<br><span class="gradient-text">Perfected.</span></h1>
+      <p class="hero-subhead">Craft studio-quality speech with neural voice models.<br>Run it on your GPU.</p>
+      <div class="hero-cta-row">
+        <a href="#studio" class="btn-primary">Try Free</a>
+        <a href="#voice-agents" class="btn-ghost">Meet the Voices</a>
+      </div>
 
-    <!-- Widescreen Stats Pill Bar (SonoAI Reference) -->
-    <div class="hero-stats-bar">
-      <div class="stat-item">
-        <div class="stat-value">90%</div>
-        <div class="stat-label">Cost Saving vs Cloud</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-value">RTX 3050 Ti</div>
-        <div class="stat-label">Dell GPU Accelerated</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-value">24 kHz</div>
-        <div class="stat-label">Broadcast Audio Quality</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-value">100% Private</div>
-        <div class="stat-label">Local LAN & Tailscale</div>
+      <div class="hero-stats-row">
+        <div class="stat-pill">
+          <span class="stat-num">82M</span>
+          <span class="stat-label">Params</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-pill">
+          <span class="stat-num">24 kHz</span>
+          <span class="stat-label">Broadcast Audio</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-pill">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Private GPU</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-pill">
+          <span class="stat-num">RTX 3050 Ti</span>
+          <span class="stat-label">CUDA Accelerated</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Studio Workspace Grid -->
-  <main class="studio-layout" id="studio">
-    
-    <!-- Left Column: Script Editor & Controls -->
-    <section class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span>◈</span> Text to Speech Studio
-        </div>
-        <span class="panel-badge">PRODUCTION WORKSPACE</span>
-      </div>
+  <!-- ========== VOICE AGENTS ========== -->
+  <section id="voice-agents" class="section-pad">
+    <div class="container">
+      <div class="section-label">Voice Characters</div>
+      <h2 class="section-title">Meet the <span class="gradient-text">Voices</span></h2>
+      <p class="section-sub">Curated AI personalities — each with a unique acoustic signature and character.</p>
 
-      <div class="script-area-wrapper">
-        <label class="field-label" for="script">Script Content</label>
-        <textarea id="script" class="script-textarea" maxlength="4000" rows="10" placeholder="Type or paste your narration script here...">Welcome to SynthTone. This is your studio-grade voice workspace, powered by neural speech models running on your Dell GPU server.</textarea>
-        <div class="script-footer">
-          <span>Tip: Separate sentences with punctuation for natural cadence & breathing</span>
-          <span><span id="char-count">0</span> / 4,000 chars</span>
+      <div id="agents-grid" class="agents-grid">
+        <!-- Populated by app.js -->
+        <div class="agents-skeleton">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Controls Grid -->
-      <div class="controls-grid">
-        <div class="control-field">
-          <label class="field-label" for="model">Neural Model</label>
-          <select id="model" class="select-custom">
-            <option value="kokoro">Kokoro 82M — Ultra-fast built-in speakers</option>
-            <option value="chatterbox-nano">Chatterbox Nano 110M — Low-memory voice clone</option>
-            <option value="chatterbox-turbo">Chatterbox Turbo 350M — High-fidelity voice clone</option>
-          </select>
-        </div>
+  <!-- ========== ARCHITECTURE ========== -->
+  <section id="architecture" class="section-pad arch-section">
+    <div class="container">
+      <div class="section-label">Under the Hood</div>
+      <h2 class="section-title">The <span class="gradient-text">Stack</span></h2>
+      <p class="section-sub">Purpose-built for local GPU inference — no cloud, no latency, no data leaving your machine.</p>
 
-        <div class="control-field">
-          <label class="field-label" for="voice">Voice Profile / Speaker</label>
-          <select id="voice" class="select-custom">
-            <option value="af_heart">Heart · English / Feminine (Warm)</option>
-            <option value="af_bella">Bella · English / Feminine (Narrator)</option>
-            <option value="am_adam">Adam · English / Masculine (Studio)</option>
-            <option value="bf_emma">Emma · British / Feminine (Crisp)</option>
-            <option value="bm_george">George · British / Masculine (Deep)</option>
-          </select>
-        </div>
-
-        <div class="control-field">
-          <label class="field-label" for="speed">Speech Speed: <span id="speed-display">1.00×</span></label>
-          <div class="slider-container">
-            <input id="speed" class="range-slider" type="range" min="0.7" max="1.3" step="0.05" value="1.0"/>
-            <span class="slider-val" id="speed-val">1.00×</span>
+      <div class="arch-columns">
+        <!-- Speech Engine -->
+        <div class="arch-card arch-card--purple">
+          <div class="arch-icon-wrap arch-icon--purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="arch-heading">Speech Engine</h3>
+          <p class="arch-desc">Kokoro 82M for ultra-fast built-in speaker synthesis. Chatterbox Nano for zero-shot voice cloning from a 10-second reference clip.</p>
+          <div class="arch-tags">
+            <span class="tag">Kokoro 82M</span>
+            <span class="tag">Chatterbox Nano</span>
+            <span class="tag">PyTorch</span>
           </div>
         </div>
 
-        <div class="control-field">
-          <label class="field-label" for="variations">Output Variations</label>
-          <select id="variations" class="select-custom">
-            <option value="1">1 Take (Standard)</option>
-            <option value="2">2 Takes (Compare)</option>
-            <option value="3">3 Takes (Full Audition)</option>
-          </select>
+        <!-- Voice Studio -->
+        <div class="arch-card arch-card--pink">
+          <div class="arch-icon-wrap arch-icon--pink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="arch-heading">Voice Studio</h3>
+          <p class="arch-desc">FastAPI backend serves synthesis jobs asynchronously. SQLite stores voice profiles and job history. Web Audio API drives the reactive orb visualization.</p>
+          <div class="arch-tags">
+            <span class="tag">FastAPI</span>
+            <span class="tag">SQLite</span>
+            <span class="tag">Web Audio API</span>
+          </div>
+        </div>
+
+        <!-- GPU Delivery -->
+        <div class="arch-card arch-card--cyan">
+          <div class="arch-icon-wrap arch-icon--cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" fill="currentColor"/>
+              <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <h3 class="arch-heading">GPU Delivery</h3>
+          <p class="arch-desc">NVIDIA RTX 3050 Ti with CUDA acceleration. Runs fully on-device over LAN or Tailscale — 90% cheaper than cloud TTS, with broadcast-quality 24kHz audio.</p>
+          <div class="arch-tags">
+            <span class="tag">RTX 3050 Ti</span>
+            <span class="tag">CUDA</span>
+            <span class="tag">Tailscale</span>
+          </div>
         </div>
       </div>
 
-      <div class="generate-action-row">
-        <button id="generate" class="btn-generate">
-          <span>✦</span> Synthesize Speech
+      <!-- Flow diagram -->
+      <div class="arch-flow">
+        <div class="flow-node">
+          <div class="flow-node-icon">📝</div>
+          <div class="flow-node-label">User Input</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">🤖</div>
+          <div class="flow-node-label">LLM Assist</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">🎵</div>
+          <div class="flow-node-label">TTS Engine</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">⚡</div>
+          <div class="flow-node-label">GPU Accelerate</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node flow-node--final">
+          <div class="flow-node-icon">🔊</div>
+          <div class="flow-node-label">Audio Output</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STUDIO ========== -->
+  <section id="studio" class="section-pad studio-section">
+    <div class="container">
+      <div class="section-label">Synthesis Workspace</div>
+      <h2 class="section-title">The <span class="gradient-text">Studio</span></h2>
+      <p class="section-sub">Craft studio-quality speech. Select a voice, write your script, and hit Synthesize.</p>
+
+      <div class="studio-card">
+        <!-- Text area -->
+        <div class="studio-field">
+          <div class="field-label-row">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <label class="field-label" for="script">Script</label>
+              <button type="button" id="btn-toggle-assistant" class="btn-assistant-pill">
+                <span>✦</span> AI Script Assistant (LLM)
+              </button>
+            </div>
+            <span class="char-counter"><span id="word-count">0</span>w · <span id="char-count">0</span> / 4,000</span>
+          </div>
+
+          <!-- Collapsible AI Script Assistant Panel -->
+          <div id="llm-assistant-panel" class="llm-assistant-panel" style="display: none;">
+            <div class="assistant-inner">
+              <div class="assistant-header">
+                <div class="assistant-title"><span>✦</span> Neural Script Assistant</div>
+                <div class="assistant-sub">Powered by local Ollama on Dell GPU (Llama 3.2 / Qwen 2.5) with fallback neural templates</div>
+              </div>
+              <div class="assistant-controls">
+                <div class="assistant-field">
+                  <label for="assistant-topic">Topic / Concept</label>
+                  <input type="text" id="assistant-topic" placeholder="e.g. Next-gen neural voice synthesis or luxury automotive review..." />
+                </div>
+                <div class="assistant-field">
+                  <label for="assistant-tone">Tone</label>
+                  <select id="assistant-tone">
+                    <option value="cinematic">Cinematic & Inspiring</option>
+                    <option value="explainer">Clear Explainer</option>
+                    <option value="storytelling">Rich Storytelling</option>
+                    <option value="commercial">Impactful Commercial</option>
+                    <option value="podcast">Conversational Podcast</option>
+                  </select>
+                </div>
+                <div class="assistant-field">
+                  <label for="assistant-duration">Length</label>
+                  <select id="assistant-duration">
+                    <option value="15s">15s (~35 words)</option>
+                    <option value="30s" selected>30s (~70 words)</option>
+                    <option value="60s">60s (~140 words)</option>
+                  </select>
+                </div>
+                <button type="button" id="btn-generate-script" class="btn-assistant-submit">
+                  <span>✦</span> Draft Script
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <textarea
+            id="script"
+            class="studio-textarea"
+            maxlength="4000"
+            rows="6"
+            placeholder="Type or paste your narration here…"
+          >Welcome to SynthTone. This is your studio-grade voice workspace, powered by neural speech models running on your GPU server.</textarea>
+        </div>
+
+        <!-- Voice grid selector -->
+        <div class="studio-field">
+          <label class="field-label">Voice</label>
+          <div id="voice-grid" class="voice-grid">
+            <!-- populated by app.js -->
+            <div class="voice-loading">Loading voices…</div>
+          </div>
+          <!-- hidden select kept for form submission logic -->
+          <select id="voice" class="voice-select-hidden" aria-hidden="true">
+            <option value="af_heart">af_heart</option>
+            <option value="af_bella">af_bella</option>
+            <option value="am_adam">am_adam</option>
+            <option value="bf_emma">bf_emma</option>
+            <option value="bm_george">bm_george</option>
+          </select>
+        </div>
+
+        <!-- Model + variations row -->
+        <div class="studio-row">
+          <div class="studio-field studio-field--half">
+            <label class="field-label" for="model">Neural Model</label>
+            <select id="model" class="select-custom">
+              <option value="kokoro">Kokoro 82M — Built-in voices</option>
+              <option value="chatterbox-nano">Chatterbox Nano 110M — Voice clone</option>
+              <option value="chatterbox-turbo">Chatterbox Turbo 350M — High fidelity</option>
+            </select>
+          </div>
+          <div class="studio-field studio-field--half">
+            <label class="field-label" for="variations">Output Variations</label>
+            <select id="variations" class="select-custom">
+              <option value="1">1 Take (Standard)</option>
+              <option value="2">2 Takes (Compare)</option>
+              <option value="3">3 Takes (Audition)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="studio-row">
+          <div class="studio-field studio-field--half">
+            <label class="field-label">Speed: <span id="speed-display">1.00×</span></label>
+            <div class="slider-wrap">
+              <input id="speed" type="range" class="range-slider" min="0.7" max="1.3" step="0.05" value="1.0" />
+            </div>
+          </div>
+          <div class="studio-field studio-field--half">
+            <label class="field-label">Pitch: <span id="pitch-display">0</span></label>
+            <div class="slider-wrap">
+              <input id="pitch" type="range" class="range-slider" min="-5" max="5" step="0.5" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Synthesize button -->
+        <button id="generate" class="btn-synthesize">
+          <span class="btn-synth-icon">✦</span>
+          Synthesize Speech
         </button>
+
+        <!-- Status / output area -->
+        <div id="studio-status" class="studio-status" style="display:none;"></div>
       </div>
 
-      <div id="status-message" style="margin-top:14px;font-size:13px;color:var(--neon-cyan);display:none;"></div>
-    </section>
-
-    <!-- Right Column: Voice Library & Dell Hardware Telemetry -->
-    <aside class="right-sidebar">
-      
-      <!-- Voice Lab / Cloning Section -->
-      <section class="panel" id="voices">
-        <div class="panel-header">
-          <div class="panel-title"><span>🎙️</span> Voice Lab</div>
-          <span class="panel-badge" style="border-color:rgba(224,64,251,0.4);color:var(--neon-magenta);">CLONING</span>
+      <!-- Job history -->
+      <div class="jobs-section">
+        <div class="jobs-header">
+          <span class="jobs-title">Generation History</span>
+          <button id="refresh-jobs" class="btn-ghost-sm">↻ Refresh</button>
         </div>
-
-        <form id="voice-form">
-          <div class="control-field" style="margin-bottom:12px;">
-            <label class="field-label" for="voice-name">New Voice Profile Name</label>
-            <input id="voice-name" class="input-custom" placeholder="e.g. My Podcast Voice" maxlength="80" required />
-          </div>
-
-          <label class="dropzone" for="voice-file">
-            <span class="dropzone-icon">♩</span>
-            <div class="dropzone-title">Upload Reference Voice Sample</div>
-            <div class="dropzone-desc">WAV, MP3, FLAC, M4A · 3–90 sec (10–20s clean speech recommended)</div>
-            <input id="voice-file" type="file" accept=".wav,.mp3,.m4a,.flac,.ogg,audio/*" style="display:none;" required />
-          </label>
-          <div id="file-chosen-name" style="font-size:11.5px;color:var(--neon-cyan);margin-bottom:10px;display:none;"></div>
-
-          <label class="consent-check">
-            <input id="consent" type="checkbox" required />
-            <span>I own this voice or possess explicit authorization from the speaker.</span>
-          </label>
-
-          <button type="submit" class="btn-icon" style="width:100%;justify-content:center;padding:11px;">
-            + Enroll Voice Profile
-          </button>
-        </form>
-
-        <div style="margin-top:16px;">
-          <div class="field-label" style="margin-bottom:6px;">Enrolled Voice Profiles</div>
-          <div id="voices-list" class="voices-list">
-            <div style="color:var(--text-dim);font-size:12.5px;padding:8px 0;">No cloned voices loaded yet.</div>
-          </div>
+        <div id="jobs-list" class="jobs-list">
+          <div class="jobs-empty">Synthesized audio will appear here.</div>
         </div>
-      </section>
-
-      <!-- Dell GPU Telemetry Card -->
-      <section class="telemetry-card">
-        <div class="panel-title" style="font-size:15px;color:var(--neon-cyan);">
-          <span>⚡</span> Dell GPU Hardware Telemetry
-        </div>
-        <div class="telemetry-grid">
-          <div class="telemetry-cell">
-            <span class="telemetry-cell-label">GPU Acceleration</span>
-            <span class="telemetry-cell-val" id="telemetry-cuda">Checking...</span>
-          </div>
-          <div class="telemetry-cell">
-            <span class="telemetry-cell-label">Graphics Card</span>
-            <span class="telemetry-cell-val" id="telemetry-name">Detecting...</span>
-          </div>
-          <div class="telemetry-cell">
-            <span class="telemetry-cell-label">VRAM Allocation</span>
-            <span class="telemetry-cell-val" id="telemetry-vram">-- GB</span>
-          </div>
-          <div class="telemetry-cell">
-            <span class="telemetry-cell-label">Active Engine</span>
-            <span class="telemetry-cell-val" id="telemetry-engine">Idle</span>
-          </div>
-        </div>
-      </section>
-
-    </aside>
-
-  </main>
-
-  <!-- Audio Generation History Section -->
-  <section class="history-section" id="history">
-    <div class="panel-header">
-      <div class="panel-title">
-        <span>◷</span> Generation History & Studio Library
-      </div>
-      <button id="refresh-jobs" class="btn-icon">↻ Refresh History</button>
-    </div>
-
-    <div id="jobs-list" class="jobs-grid">
-      <div style="color:var(--text-dim);text-align:center;padding:36px;font-size:14px;">
-        Generated takes and synthesized audio clips will appear here.
       </div>
     </div>
   </section>
 
-  <!-- Hidden Audio Player for Sync with AI Orb -->
-  <audio id="global-synthtone-player" style="display:none;"></audio>
-
-  <!-- Footer -->
-  <footer>
-    <div style="margin-bottom:8px;font-weight:600;color:var(--text-main);">
-      SynthTone AI Voice Studio · Copyright © 2026 Hari Aditya
-    </div>
-    <div style="color:var(--text-dim);font-size:12px;">
-      Private local inference on Dell GPU Linux systems. Powered by Kokoro & Chatterbox neural synthesis.
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-name">Synth<span class="brand-accent">Tone</span></span>
+        <span class="footer-tagline">Neural Voice Studio</span>
+      </div>
+      <div class="footer-links">
+        <a href="#hero">Home</a>
+        <a href="#voice-agents">Voices</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#studio">Studio</a>
+        <a href="/docs" target="_blank">API Docs</a>
+      </div>
+      <div class="footer-copy">
+        © 2026 Hari Aditya · MIT License · Private local GPU inference
+      </div>
     </div>
   </footer>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Hidden global audio for orb sync -->
+  <audio id="global-player" style="display:none;"></audio>
 
   <script type="module" src="/app.js"></script>
 </body>

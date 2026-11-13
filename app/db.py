@@ -29,6 +29,7 @@ def database():
 def setup():
     (DATA_DIR / "references").mkdir(exist_ok=True)
     (DATA_DIR / "outputs").mkdir(exist_ok=True)
+    (DATA_DIR / "demos").mkdir(exist_ok=True)
     with database() as db:
         db.executescript(
             """
@@ -55,7 +56,46 @@ def setup():
                 updated_at TEXT NOT NULL
             );
             CREATE INDEX IF NOT EXISTS jobs_status_created ON jobs(status, created_at);
+            CREATE TABLE IF NOT EXISTS voice_agents (
+                id TEXT PRIMARY KEY,
+                name TEXT,
+                tagline TEXT,
+                description TEXT,
+                model_id TEXT,
+                builtin_voice TEXT,
+                personality TEXT,
+                demo_audio_path TEXT,
+                created_at TEXT
+            );
             """
+        )
+        # Seed built-in agents
+        db.executemany(
+            """
+            INSERT OR IGNORE INTO voice_agents
+                (id, name, tagline, description, model_id, builtin_voice, personality, demo_audio_path, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            """,
+            [
+                (
+                    "nova", "Nova", "Warm Narrator",
+                    "A warm, expressive feminine voice perfect for storytelling and empathetic narration.",
+                    "kokoro", "af_heart", "Optimistic, nurturing, clear-spoken.",
+                    "data/demos/nova.wav",
+                ),
+                (
+                    "echo", "Echo", "Deep Professional",
+                    "A deep authoritative masculine voice for corporate narration and documentaries.",
+                    "kokoro", "bm_george", "Composed, formal, gravitas.",
+                    "data/demos/echo.wav",
+                ),
+                (
+                    "lyra", "Lyra", "Crisp British",
+                    "A crisp British feminine voice for educational content and audiobooks.",
+                    "kokoro", "bf_emma", "Elegant, precise, articulate.",
+                    "data/demos/lyra.wav",
+                ),
+            ],
         )
         # Following an unexpected shutdown or crash, recover jobs
         db.execute("UPDATE jobs SET status='queued' WHERE status='running'")

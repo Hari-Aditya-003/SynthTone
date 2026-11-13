@@ -31,3 +31,4 @@ echo "  To view logs: docker compose logs -f synthtone"
 echo "  To access from your MacBook over LAN or Tailscale:"
 echo "    ssh -L 8000:127.0.0.1:8000 <dell-user>@<dell-ip>"
 echo "=============================================================================="
+

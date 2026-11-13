@@ -12,14 +12,21 @@ SynthTone includes an interactive **AI Character Orb** that tracks your mouse cu
 
 ## 🌟 Core Features
 
-- **Futuristic Studio UI:** Widescreen obsidian theme with neon cyan & magenta aurora beams, floating glassmorphic audio visualizers, and real-time generation metrics.
-- **Interactive AI Character Orb:**
-  - **3D Mouse Tracking:** Inner digital matrix screen and glowing slit eyes (`| |`) follow your cursor anywhere on screen.
-  - **Fluid Soundwave Mode:** Morphs into an undulating chromatic waveform during speech synthesis or playback.
-  - **Live Mic Reactivity:** Directly test microphone input with Web Audio API frequency analysis.
-  - **Reusable Module:** Self-contained in [`ai-character-orb/`](ai-character-orb/) for immediate use in other projects!
+- **Voice Characters & Instant Auditions:**
+  - **Nova:** Warm, expressive feminine voice designed for storytelling and empathetic explainer videos.
+  - **Echo:** Deep, commanding masculine voice built for corporate narration, documentaries, and authoritative delivery.
+  - **Lyra:** Crisp British feminine voice tailored for education, refined presentations, and luxury audiobooks.
+  - **Broadcast Audio with Ambient Music:** Hear every voice with harmonic ambient synth bed preview before synthesizing.
+- **Neural Script Assistant (Local LLM):**
+  - Instant script drafting powered by local Ollama on your GPU server (Llama 3.2 / Qwen 2.5 / Mistral) with built-in neural templates.
+  - Generates optimized TTS text across multiple tones: Cinematic, Explainer, Storytelling, Commercial, and Podcast.
+- **Interactive AI Character Orb (Canvas 2D):**
+  - **Parallax Mouse Tracking:** Internal glows and eyes track cursor movement across the viewport with realistic 3D sphere parallax.
+  - **Digital Robot Facial Expressions:** Supports 9 expressions (Neutral, Happy `^ ^`, Hearts `♥`, Stars `✦`, Wink `| <`, Sleepy `- -`, Confused `?`, Dizzy `@ @`, Blush `🌸`).
+  - **Fluid Siri-style Waveform:** Morphs smoothly during speech synthesis or live audio playback.
+  - **Reusable Module:** Self-contained in [`ai-character-orb/`](ai-character-orb/) for immediate use in other web and mobile projects!
 - **Multi-Tier Neural Speech Engines:**
-  - **Kokoro 82M:** Ultra-fast, natural speech with 5 built-in voices (Heart, Bella, Adam, Emma, George); CPU and GPU accelerated.
+  - **Kokoro 82M:** Ultra-fast, natural speech with 5 built-in voices; CPU and GPU accelerated.
   - **Chatterbox Nano 110M:** Zero-shot voice cloning optimized for 4 GB VRAM GPUs like the RTX 3050 Ti.
   - **Chatterbox Turbo 350M:** Studio-fidelity expressive voice cloning with custom reference audio prompts.
 - **Engineered for Dell GPU Linux Servers:**

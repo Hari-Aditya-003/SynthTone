@@ -147,3 +147,4 @@ Customize colors and sizes via CSS variables on the container or `:root`:
 ## 📄 License
 
 MIT License — Copyright (c) 2026 Hari Aditya. Free to use in personal, open-source, and commercial projects.
+
