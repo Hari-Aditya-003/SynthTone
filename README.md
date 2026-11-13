@@ -1,10 +1,10 @@
-# MLX TTS Studio
-
-[![CI](https://github.com/rorystandley/mlx-tts-studio/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rorystandley/mlx-tts-studio/actions/workflows/ci.yml)
+# SynthTone
 
 A local text-to-speech app for Apple Silicon Macs. It uses [MLX Audio](https://github.com/Blaizzy/mlx-audio) to run Hugging Face TTS models through MLX, with a Gradio UI for text, voices, sampling controls, reference audio, and saved audio output.
 
-MLX TTS Studio is standalone. It can be used directly in the browser or as a small local HTTP speech service for any other tool that can call a local endpoint.
+SynthTone is standalone. It can be used directly in the browser or as a small local HTTP speech service for any other tool that can call a local endpoint.
+
+*Forked & adapted from [MLX TTS Studio](https://github.com/rorystandley/mlx-tts-studio).*
 
 ![MLX TTS Studio screenshot](docs/assets/mlx-tts-studio-screenshot.png)
 
@@ -34,8 +34,8 @@ Check each Hugging Face model card before commercial use. "Open weights" and "op
 ## Run
 
 ```bash
-git clone https://github.com/rorystandley/mlx-tts-studio.git
-cd mlx-tts-studio
+git clone https://github.com/Hari-Aditya-003/SynthTone.git
+cd SynthTone
 uv sync
 ./run.sh
 ```

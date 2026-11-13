@@ -1,11 +1,11 @@
 [project]
-name = "mlx-tts-studio"
+name = "synthtone"
 version = "0.1.0"
-description = "A local Apple Silicon text-to-speech app powered by MLX and Hugging Face open models."
+description = "SynthTone: A local Apple Silicon text-to-speech app and API powered by MLX and Hugging Face open models."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 authors = [
-  { name = "Rory Standley", email = "rorystandley@gmail.com" },
+  { name = "Hari Aditya", email = "hari.aditya003@gmail.com" },
 ]
 license = "MIT"
 keywords = ["apple-silicon", "huggingface", "mlx", "text-to-speech", "tts"]

@@ -61,7 +61,7 @@ class OpenAISpeechRequest(BaseModel):
 
 
 api_app = FastAPI(
-    title="MLX TTS Studio",
+    title="SynthTone",
     description="Local Apple Silicon TTS API backed by MLX Audio models.",
     version="0.1.0",
 )
@@ -278,7 +278,7 @@ def build_app() -> gr.Blocks:
     )
     machine_label = f"{platform.machine()} / {memory_label}"
 
-    with gr.Blocks(title="MLX TTS Studio", fill_height=True) as demo:
+    with gr.Blocks(title="SynthTone", fill_height=True) as demo:
         gr.HTML(
             f"""
             <header style="display:flex;align-items:center;gap:14px;margin:0 0 18px;">
@@ -289,7 +289,7 @@ def build_app() -> gr.Blocks:
                 style="width:52px;height:52px;border-radius:12px;flex:0 0 auto;"
               />
               <div>
-                <h1 style="margin:0 0 4px;font-size:28px;line-height:1.1;">MLX TTS Studio</h1>
+                <h1 style="margin:0 0 4px;font-size:28px;line-height:1.1;">SynthTone</h1>
                 <p style="margin:0;color:var(--body-text-color-subdued);">
                   Apple Silicon MLX text-to-speech. <code>{machine_label}</code>
                 </p>
