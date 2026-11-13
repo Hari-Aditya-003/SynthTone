@@ -1,8 +1,11 @@
 # SynthTone — Studio-Grade AI Voice Production & Voice Cloning
 
+[![Live Demo: GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-00f0ff?style=flat&logo=github)](https://hari-aditya-003.github.io/SynthTone/)
 [![SynthTone CI](https://github.com/Hari-Aditya-003/SynthTone/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hari-Aditya-003/SynthTone/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CUDA Accelerated](https://img.shields.io/badge/GPU-NVIDIA%20RTX%203050%20Ti-76B900?logo=nvidia)](https://developer.nvidia.com/cuda-zone)
+
+🌐 **Live Demo Website:** [https://hari-aditya-003.github.io/SynthTone/](https://hari-aditya-003.github.io/SynthTone/)
 
 **SynthTone** is a private, high-performance neural speech synthesis and zero-shot voice cloning studio engineered for **Dell Linux GPU servers** (NVIDIA RTX 3050 Ti / CUDA) with a responsive, futuristic web interface accessible from your MacBook, workstation, or mobile device.
 
